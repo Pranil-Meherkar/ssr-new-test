@@ -1,8 +1,9 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production', // Set the mode explicitly
     entry: './src/client/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -11,22 +12,31 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/, // Include .jsx files
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                },
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                use: [
+                    MiniCssExtractPlugin.loader, // Extract CSS into separate files
+                    'css-loader',
+                ],
             },
         ],
     },
     resolve: {
-        extensions: ['.js', '.jsx'], // Add .jsx extension
+        extensions: ['.js', '.jsx'],
     },
     plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'styles.css',
+        }),
         new HtmlWebpackPlugin({
-            template: './src/client/index.html',
+            template: './src/client/index.html', // Ensure this path is correct
+            filename: 'index.html',
         }),
     ],
 };

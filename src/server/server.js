@@ -1,34 +1,39 @@
-import path from 'path';
-import fs from 'fs';
 import express from 'express';
+import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import App from '../shared/App';
+import fs from 'fs';
 
-const PORT = 3000;
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.resolve(__dirname, '..', 'dist')));
+// Serve static files from the "dist" directory
+app.use(express.static(path.join(__dirname, '../dist')));
 
+app.use((req, res, next) => {
+    console.log(`Received request for ${req.url}`);
+    next();
+});
+
+// Handle all GET requests to render the React application
 app.get('*', (req, res) => {
+    console.log(`Received request for ${req.url}`);
     const context = {};
-
-    const appString = ReactDOMServer.renderToString(
+    const html = ReactDOMServer.renderToString(
         <StaticRouter location={req.url} context={context}>
             <App />
         </StaticRouter>
     );
 
-    const indexFile = path.resolve(__dirname, '../client/index.html');
-    fs.readFile(indexFile, 'utf8', (err, data) => {
+    fs.readFile(path.resolve(__dirname, '../dist/index.html'), (err, data) => {
         if (err) {
-            console.error('Something went wrong:', err);
-            return res.status(500).send('Oops, better luck next time!');
+            console.log('err', err)
+            return res.status(500).send('Some error happeneddd');
         }
-
         return res.send(
-            data.replace('<div id="root"></div>', `<div id="root">${appString}</div>`)
+            data.toString().replace('<div id="root"></div>', `<div id="root">${html}</div>`)
         );
     });
 });

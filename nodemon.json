@@ -1,0 +1,5 @@
+{
+    "watch": ["src"],
+    "ext": "js,jsx,json,css,html",
+    "exec": "rm -rf dist && npm run build && node dist/server.bundle.js"
+}

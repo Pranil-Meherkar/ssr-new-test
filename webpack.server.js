@@ -1,25 +1,33 @@
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin'); // Ensure this is installed
 
 module.exports = {
-    mode: 'development',
+    mode: 'production', // Set the mode explicitly
     entry: './src/server/server.js',
-    target: 'node',
-    externals: [nodeExternals()],
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'server.bundle.js',
     },
+    target: 'node', // Ensure Webpack builds for Node.js
+    externals: [require('webpack-node-externals')()], // Exclude node_modules
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/, // Include .jsx files
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
-                use: 'babel-loader',
+                use: {
+                    loader: 'babel-loader',
+                },
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    'css-loader', // Do not use style-loader in server-side build
+                ],
             },
         ],
     },
     resolve: {
-        extensions: ['.js', '.jsx'], // Add .jsx extension
+        extensions: ['.js', '.jsx'],
     },
 };
