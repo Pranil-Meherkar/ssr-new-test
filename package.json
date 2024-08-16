@@ -6,8 +6,10 @@
     "build:client": "webpack --config webpack.client.js",
     "build:server": "webpack --config webpack.server.js",
     "build": "npm run build:client && npm run build:server",
-    "start": "nodemon dist/server.bundle.js",
-    "restart": "rm -rf dist && npm run build && npm run start"
+    "start": "node dist/server.bundle.js",
+    "start:local": "nodemon dist/server.bundle.js",
+    "restart": "rm -rf dist && npm run build && npm run start",
+    "postinstall": "npm cache clean --force"
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -29,5 +31,9 @@
     "webpack": "^5.39.1",
     "webpack-cli": "^4.7.2",
     "webpack-node-externals": "^2.5.2"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }
